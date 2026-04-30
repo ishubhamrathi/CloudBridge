@@ -29,3 +29,9 @@ cloud:
 
 - Failed messages retry
 - After max attempts -> DLQ
+
+## Delivery Notes
+
+- `RetryPolicy` centralizes max attempts and backoff
+- `RetryExecutor` applies retry, backoff, ack, nack, and DLQ routing behavior
+- `DefaultDeadLetterPublisher` forwards exhausted messages to `queue + dlqSuffix`

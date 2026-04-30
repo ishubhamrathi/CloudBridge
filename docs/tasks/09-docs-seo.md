@@ -19,3 +19,10 @@ Make project discoverable
 ## Acceptance Criteria
 
 - README explains problem clearly
+
+## Delivery Notes
+
+- README now explains the lock-in problem, the supported Java version, and the starter's scope
+- Mermaid architecture diagrams added to the README and blog draft
+- Keywords are included in the README to help discoverability
+

@@ -26,3 +26,10 @@ Implement AWS support using SQS, SNS, DynamoDB
 
 - Can send/receive messages locally (LocalStack optional)
 - Works with core interfaces
+
+## Delivery Notes
+
+- `AwsQueueClient` maps `CloudMessage` headers to SQS message attributes
+- `AwsQueueConsumer` performs SQS polling and hands messages to the listener engine
+- `AwsSqsAcknowledgement` deletes messages on ack and leaves them for redelivery on nack
+- `AwsKeyValueStore` provides the DynamoDB-backed storage implementation used by Task 7

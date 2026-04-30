@@ -32,3 +32,9 @@ interface QueueClient {
 - Clean API
 - No provider-specific logic
 - Unit tests added
+
+## Delivery Notes
+
+- Core messaging contracts live under `io.cloudbridge.core.messaging`
+- The API stays free of cloud SDK types and keeps Java/Kotlin-friendly shapes
+- Unit tests cover the core contract, listener annotation metadata, and immutable message behavior

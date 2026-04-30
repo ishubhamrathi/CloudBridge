@@ -27,3 +27,10 @@ Process `@QueueListener` and connect to adapters
 
 - Listener works end-to-end
 - Supports concurrency config
+
+## Delivery Notes
+
+- `QueueListenerAnnotationBeanPostProcessor` scans beans for `@QueueListener`
+- `QueueListenerRegistry` and `QueueListenerEndpoint` store discovered listeners
+- `QueueListenerMethodInvoker` dispatches `CloudMessage`, payload `String`, and `Acknowledgement`
+- `QueueListenerContainerManager` wires provider consumers to a thread-pool-backed retry flow

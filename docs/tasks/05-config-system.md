@@ -25,3 +25,9 @@ cloud:
 ## Acceptance Criteria
 
 - Switching provider via config works
+
+## Delivery Notes
+
+- `CloudBridgeProperties` binds `cloud.*` configuration for provider, messaging, and storage
+- `ProviderResolver` exposes the selected provider to the runtime
+- `CloudBridgeAutoConfiguration` registers auto-configured beans for AWS, Azure, and GCP

@@ -17,3 +17,8 @@ Add key-value abstraction
 ## Acceptance Criteria
 
 - Put/get/delete works
+
+## Delivery Notes
+
+- `KeyValueStore` defines the provider-neutral CRUD contract
+- `AwsKeyValueStore` maps the contract to DynamoDB using a simple `pk` / `payload` item shape
