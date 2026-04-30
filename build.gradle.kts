@@ -1,5 +1,6 @@
 plugins {
     `java-library`
+    `maven-publish`
 }
 
 group = "io.cloudbridge"
@@ -42,4 +43,46 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("mavenJava") {
+            from(components["java"])
+            artifactId = "cloud-bridge-spring-boot-starter"
+
+            pom {
+                name.set("CloudBridge")
+                description.set("Cloud-agnostic Spring Boot starter for messaging and basic key-value storage.")
+                url.set("https://github.com/your-org/cloudbridge")
+
+                licenses {
+                    license {
+                        name.set("MIT License")
+                        url.set("https://opensource.org/licenses/MIT")
+                    }
+                }
+
+                developers {
+                    developer {
+                        id.set("cloudbridge")
+                        name.set("CloudBridge Contributors")
+                    }
+                }
+
+                scm {
+                    connection.set("scm:git:https://github.com/your-org/cloudbridge.git")
+                    developerConnection.set("scm:git:ssh://git@github.com:your-org/cloudbridge.git")
+                    url.set("https://github.com/your-org/cloudbridge")
+                }
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            name = "localBuildRepo"
+            url = uri(layout.buildDirectory.dir("repo"))
+        }
+    }
 }
