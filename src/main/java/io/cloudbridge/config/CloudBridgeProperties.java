@@ -210,6 +210,12 @@ public class CloudBridgeProperties {
 
     public static class OciProperties {
         private String region;
+        private String endpoint;
+        private String configFilePath = "~/.oci/config";
+        private String profile = "DEFAULT";
+        private int channelConsumptionLimit = 10;
+        private int visibilityInSeconds = 30;
+        private int pollingTimeoutSeconds = 10;
 
         public String getRegion() {
             return region;
@@ -217,6 +223,54 @@ public class CloudBridgeProperties {
 
         public void setRegion(String region) {
             this.region = region;
+        }
+
+        public String getEndpoint() {
+            return endpoint;
+        }
+
+        public void setEndpoint(String endpoint) {
+            this.endpoint = endpoint;
+        }
+
+        public String getConfigFilePath() {
+            return configFilePath;
+        }
+
+        public void setConfigFilePath(String configFilePath) {
+            this.configFilePath = configFilePath;
+        }
+
+        public String getProfile() {
+            return profile;
+        }
+
+        public void setProfile(String profile) {
+            this.profile = profile;
+        }
+
+        public int getChannelConsumptionLimit() {
+            return channelConsumptionLimit;
+        }
+
+        public void setChannelConsumptionLimit(int channelConsumptionLimit) {
+            this.channelConsumptionLimit = channelConsumptionLimit;
+        }
+
+        public int getVisibilityInSeconds() {
+            return visibilityInSeconds;
+        }
+
+        public void setVisibilityInSeconds(int visibilityInSeconds) {
+            this.visibilityInSeconds = visibilityInSeconds;
+        }
+
+        public int getPollingTimeoutSeconds() {
+            return pollingTimeoutSeconds;
+        }
+
+        public void setPollingTimeoutSeconds(int pollingTimeoutSeconds) {
+            this.pollingTimeoutSeconds = pollingTimeoutSeconds;
         }
     }
 

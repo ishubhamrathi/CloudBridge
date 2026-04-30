@@ -6,8 +6,8 @@ The goal is to keep application code cloud-agnostic while letting adapters handl
 
 ## Current Status
 
-- Implemented providers: AWS, Azure, GCP
-- Planned provider: OCI
+- Implemented messaging providers: AWS, Azure, GCP, OCI
+- Implemented storage provider: AWS
 - Java version: 21
 - Packaging: Spring Boot auto-configuration based starter library
 
@@ -56,12 +56,12 @@ The goal is to keep application code cloud-agnostic while letting adapters handl
 
 | Feature | AWS | Azure | GCP | OCI |
 | --- | --- | --- | --- | --- |
-| Queue send | Yes | Yes | Yes | Planned |
-| Queue receive | Yes | Yes | Yes | Planned |
-| Listener engine | Yes | Yes | Yes | Planned |
-| Retry + DLQ pipeline | Yes | Yes | Yes | Planned |
-| Delayed delivery | Yes | Yes | No portable scheduler in current adapter | Planned |
-| Key-value storage | DynamoDB | No | No | Planned |
+| Queue send | Yes | Yes | Yes | Yes |
+| Queue receive | Yes | Yes | Yes | Yes |
+| Listener engine | Yes | Yes | Yes | Yes |
+| Retry + DLQ pipeline | Yes | Yes | Yes | Yes |
+| Delayed delivery | Yes | Yes | No portable scheduler in current adapter | Yes |
+| Key-value storage | DynamoDB | No | No | No |
 
 ## Project Structure
 
@@ -89,6 +89,7 @@ flowchart LR
   Adapter --> AWS[AWS SQS / DynamoDB]
   Adapter --> AZ[Azure Service Bus]
   Adapter --> GCP[GCP Pub/Sub]
+  Adapter --> OCI[OCI Queue]
 ```
 
 ## Local Build
@@ -170,6 +171,17 @@ cloud:
   provider: GCP
   gcp:
     projectId: your-project-id
+```
+
+OCI:
+
+```yaml
+cloud:
+  provider: OCI
+  oci:
+    endpoint: https://cell-1.queue.messaging.<region>.oci.oraclecloud.com
+    configFilePath: ~/.oci/config
+    profile: DEFAULT
 ```
 
 ### 2. Send a message
@@ -294,6 +306,19 @@ cloud:
     emulatorHost: localhost:8085
 ```
 
+### OCI
+
+```yaml
+cloud:
+  oci:
+    endpoint: https://cell-1.queue.messaging.<region>.oci.oraclecloud.com
+    configFilePath: ~/.oci/config
+    profile: DEFAULT
+    channelConsumptionLimit: 10
+    visibilityInSeconds: 30
+    pollingTimeoutSeconds: 10
+```
+
 ### Storage
 
 ```yaml
@@ -347,6 +372,14 @@ Depending on provider and classpath, CloudBridge wires these core beans:
 - AWS uses SQS delay seconds when `SendOptions.delay()` is set
 - Azure uses scheduled enqueue time
 - GCP adapter currently ignores send delay because the current portable adapter does not implement provider-specific scheduling
+- OCI uses per-message delay when `SendOptions.delay()` is set
+
+### Destination semantics by provider
+
+- AWS listener and send destinations are queue names
+- Azure listener and send destinations are queue names
+- GCP listener and send destinations are topic or subscription names, depending on producer or consumer context
+- OCI listener and send destinations are queue OCIDs in the current adapter
 
 ## Local Development With AWS LocalStack
 
@@ -415,7 +448,6 @@ gradle publish
 
 ## Limitations
 
-- There is no OCI adapter implementation yet
 - Storage is currently implemented only for AWS DynamoDB
 - There is no Gradle wrapper committed yet
 - External-provider integration tests are not wired yet

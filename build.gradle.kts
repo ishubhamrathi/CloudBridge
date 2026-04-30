@@ -11,6 +11,7 @@ val springFrameworkVersion = "6.1.14"
 val awsSdkVersion = "2.28.24"
 val azureServiceBusVersion = "7.17.6"
 val gcpPubSubVersion = "1.136.0"
+val ociSdkVersion = "3.68.2"
 
 java {
     toolchain {
@@ -35,6 +36,7 @@ dependencies {
 
     implementation("com.azure:azure-messaging-servicebus:$azureServiceBusVersion")
     implementation("com.google.cloud:google-cloud-pubsub:$gcpPubSubVersion")
+    implementation("com.oracle.oci.sdk:oci-java-sdk-queue:$ociSdkVersion")
 
     testImplementation(platform("org.junit:junit-bom:5.10.2"))
     testImplementation("org.junit.jupiter:junit-jupiter")

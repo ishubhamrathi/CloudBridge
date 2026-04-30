@@ -24,6 +24,15 @@ docs/examples/
 2. Read the multi-cloud example to see how the same app switches providers by configuration.
 3. Use the root README for a short overview and quick-start path.
 
+## Current Provider Coverage
+
+- AWS messaging and DynamoDB storage
+- Azure messaging
+- GCP messaging
+- OCI messaging
+
+Storage remains AWS-only in the current implementation.
+
 ## Delivery Target
 
 The example docs are written to match the PRD scope:
@@ -31,4 +40,3 @@ The example docs are written to match the PRD scope:
 - Portable messaging
 - Event-driven processing
 - Basic key-value storage
-

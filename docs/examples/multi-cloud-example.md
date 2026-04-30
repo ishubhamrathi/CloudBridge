@@ -5,7 +5,7 @@ The application code stays the same while the adapter changes underneath.
 
 ## Goal
 
-Demonstrate that CloudBridge can move between AWS, Azure, and GCP without rewriting the business logic.
+Demonstrate that CloudBridge can move between AWS, Azure, GCP, and OCI without rewriting the business logic.
 
 ## Flow
 
@@ -28,17 +28,26 @@ sequenceDiagram
 
 ```yaml
 cloud:
-  provider: aws
+  provider: AWS
 ```
 
 ```yaml
 cloud:
-  provider: azure
+  provider: AZURE
 ```
 
 ```yaml
 cloud:
-  provider: gcp
+  provider: GCP
+```
+
+```yaml
+cloud:
+  provider: OCI
+  oci:
+    endpoint: https://cell-1.queue.messaging.<region>.oci.oraclecloud.com
+    configFilePath: ~/.oci/config
+    profile: DEFAULT
 ```
 
 ## What Stays Stable
@@ -54,4 +63,4 @@ cloud:
 - The provider adapter
 - The queue or topic backend
 - The provider-specific retry and DLQ behavior
-
+- The destination identifier style, such as OCI queue OCIDs versus queue names in other adapters

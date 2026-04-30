@@ -19,6 +19,8 @@ import io.cloudbridge.listener.QueueListenerAnnotationBeanPostProcessor;
 import io.cloudbridge.listener.QueueListenerContainerManager;
 import io.cloudbridge.listener.QueueListenerMethodInvoker;
 import io.cloudbridge.listener.QueueListenerRegistry;
+import io.cloudbridge.oci.messaging.OciQueueConsumerFactory;
+import io.cloudbridge.oci.messaging.OciQueueClient;
 import io.cloudbridge.retry.BackoffSleeper;
 import io.cloudbridge.retry.DeadLetterPublisher;
 import io.cloudbridge.retry.DefaultDeadLetterPublisher;
@@ -27,6 +29,7 @@ import io.cloudbridge.retry.RetryExecutor;
 import io.cloudbridge.retry.RetryPolicy;
 import java.net.URI;
 import java.time.Duration;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -34,6 +37,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import com.oracle.bmc.ConfigFileReader;
+import com.oracle.bmc.auth.ConfigFileAuthenticationDetailsProvider;
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
@@ -218,5 +223,49 @@ public class CloudBridgeAutoConfiguration {
     @ConditionalOnProperty(prefix = "cloud", name = "provider", havingValue = "GCP")
     public CloudCapabilities gcpCapabilities() {
         return new SimpleCloudCapabilities(false, true, true);
+    }
+
+    @Bean
+    @ConditionalOnProperty(prefix = "cloud", name = "provider", havingValue = "OCI")
+    @ConditionalOnMissingBean
+    public ConfigFileAuthenticationDetailsProvider ociAuthenticationDetailsProvider(CloudBridgeProperties properties) throws java.io.IOException {
+        return new ConfigFileAuthenticationDetailsProvider(
+                ConfigFileReader.parse(properties.getOci().getConfigFilePath(), properties.getOci().getProfile()));
+    }
+
+    @Bean
+    @ConditionalOnProperty(prefix = "cloud", name = "provider", havingValue = "OCI")
+    @ConditionalOnMissingBean(name = "ociQueueSdkClient")
+    public com.oracle.bmc.queue.QueueClient ociQueueSdkClient(
+            ConfigFileAuthenticationDetailsProvider authenticationDetailsProvider,
+            CloudBridgeProperties properties
+    ) {
+        com.oracle.bmc.queue.QueueClient client = com.oracle.bmc.queue.QueueClient.builder()
+                .build(authenticationDetailsProvider);
+        if (properties.getOci().getEndpoint() != null && !properties.getOci().getEndpoint().isBlank()) {
+            client.setEndpoint(properties.getOci().getEndpoint());
+        }
+        return client;
+    }
+
+    @Bean
+    @ConditionalOnProperty(prefix = "cloud", name = "provider", havingValue = "OCI")
+    public QueueClient ociQueueClient(@Qualifier("ociQueueSdkClient") com.oracle.bmc.queue.QueueClient queueClient) {
+        return new OciQueueClient(queueClient);
+    }
+
+    @Bean
+    @ConditionalOnProperty(prefix = "cloud", name = "provider", havingValue = "OCI")
+    public QueueConsumerFactory ociQueueConsumerFactory(
+            @Qualifier("ociQueueSdkClient") com.oracle.bmc.queue.QueueClient queueClient,
+            CloudBridgeProperties properties
+    ) {
+        return new OciQueueConsumerFactory(queueClient, properties);
+    }
+
+    @Bean
+    @ConditionalOnProperty(prefix = "cloud", name = "provider", havingValue = "OCI")
+    public CloudCapabilities ociCapabilities() {
+        return new SimpleCloudCapabilities(true, true, true);
     }
 }

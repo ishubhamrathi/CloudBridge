@@ -22,7 +22,7 @@ flowchart LR
 
 ## Intended Setup
 
-- Provider: `aws`
+- Provider: `AWS`
 - Queue backend: `SQS`
 - Optional fanout: `SNS`
 - Storage backend: `DynamoDB`
@@ -31,7 +31,12 @@ flowchart LR
 
 ```yaml
 cloud:
-  provider: aws
+  provider: AWS
+  aws:
+    region: us-east-1
+    endpoint: http://localhost:4566
+  storage:
+    tableName: cloud_bridge_kv
   messaging:
     retry:
       maxAttempts: 3
@@ -51,3 +56,4 @@ public void handle(CloudMessage message, Acknowledgement ack) {
 - Keep the message contract provider-agnostic in application code.
 - Use AWS-specific behavior only in the adapter layer.
 - Preserve the same listener and client shape for other cloud providers.
+- In the current implementation, AWS is also the only provider with `KeyValueStore` support.
